@@ -1,0 +1,88 @@
+#!/bin/bash
+
+# If it isn't already set use the default ~/work/.gitar
+#
+[ -z $GITAR ] && GITAR="${HOME}/.gitar"
+
+if [ ! -d $GITAR ]
+then
+  cat<<GITAR
+
+*** Either set \$GITAR to point to the directory for storing the tarballs
+*** or mkdir $GITAR and we will use that instead.
+
+GITAR
+  exit 2
+fi
+
+TARX="$GITAR/AAA_TarExcludes"
+
+# Might be nice to eventually build this up from the .gitignore files or
+# maybe the output from git ls-files --others --ignore --exclude-standard
+if [ ! -f $TARX ]
+then
+  cat<<TARX
+
+*** Missing $TARX
+
+*** This file is used to contain a list of files to exclude from the
+*** tarball. Creating with default list of:
+
+*.o
+*.so
+core.*
+
+TARX
+
+  cat > $TARX <<DEFX
+*.o
+*.so
+core.*
+DEFX
+fi
+
+# Ask git for the root directory of the repository,
+GTOP=`git rev-parse --show-toplevel 2> /dev/null`
+
+if [ $? != 0 ];
+then
+  cat<<NOGIT
+
+*** Are you sure this is a git repository?
+
+NOGIT
+  exit 2
+fi
+
+REPO=`basename ${GTOP}`
+
+# Create the repo tarball dir if needed
+#
+[ ! -d $GITAR/$REPO ] && mkdir $GITAR/$REPO
+
+# Build a date time string of YYYYMMDD-HHMMSS
+#
+DTS="`date +\"%Y%m%d-%H%M%S\"`"
+
+TARB=${GITAR}/${REPO}/${DTS}.tar # Craft the target tarball name.
+
+# Now do the work
+#
+cd ${REPO}/..
+printf "\n*** Tarring     $TARB\n"
+tar cf $TARB -X $TARX $REPO
+chmod 0640 $TARB
+
+# Do the compression and use xz if it's available
+#
+ZIPPER=bzip2
+FIZ=bz2
+if (type xz 2>&1) >/dev/null
+then
+  ZIPPER=xz
+  FIZ=xz
+fi
+
+printf   "*** Compressing $TARB.$FIZ (background)\n\n"
+$ZIPPER $TARB &
+cd - 2>&1 >/dev/null

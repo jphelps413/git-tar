@@ -1,0 +1,5 @@
+*.class
+*.o
+*.so
+core.[0-9]*
+autom4te.cache/*
