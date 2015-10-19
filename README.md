@@ -22,9 +22,16 @@ the script will do the following:
 
   - Locate the top of the repository and tar its contents into the $GITAR
     directory by building up a file name in the form of:
-
+    ```
        $GITAR/<repository_name>/<YYYYMMDD-hhmmss>.tar
+    ```
 
   - Finally, the tarball will be compressed using bzip2 by default, or xz
     if it is available on the system. This operation is performed in the
     background since it can sometimes be a rather lengthy process.
+
+# install
+
+Simply clone and then add git-tar to a subdirectory that the shell searches
+for executables. Also make certain the file permissions are set to 0555 to
+ensure that it is executable.
