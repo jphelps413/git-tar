@@ -68,7 +68,7 @@ TARB=${GITAR}/${REPO}/${DTS}.tar # Craft the target tarball name.
 
 # Now do the work
 #
-cd ${REPO}/..
+cd ${GTOP}/..
 printf "\n*** Tarring     $TARB\n"
 tar cf $TARB -X $TARX $REPO
 chmod 0640 $TARB
