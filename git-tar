@@ -31,7 +31,7 @@ then
 *.o
 *.so
 core.*
-
+node_modules
 TARX
 
   cat > $TARX <<DEFX
