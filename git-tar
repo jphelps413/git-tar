@@ -38,6 +38,7 @@ TARX
 *.o
 *.so
 core.*
+node_modules
 DEFX
 fi
 
